@@ -24,13 +24,17 @@ public class User {
     @Column(name="role", length = 255)
     private String role;
     
+    @Column(name="userid")
+    private Integer userid;
+    
 
     public User() {}
 
-    public User(String username, String password, String role) {
+    public User(String username, String password, String role , Integer userid) {
         this.username = username;
         this.password = password;
         this.role = role;
+        this.userid=userid;
     }
 
     // Getters and setters
@@ -65,7 +69,16 @@ public class User {
 	public void setRole(String role) {
 		this.role = role;
 	}
+
+	public Integer getUserid() {
+		return userid;
+	}
+
+	public void setUserid(Integer userid) {
+		this.userid = userid;
+	}
     
+	
     
     
     

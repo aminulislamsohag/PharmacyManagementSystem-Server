@@ -21,22 +21,14 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public int login(User user) {
-        User existingUser = userRepository.findByUsername(user.getUsername());
-        if (existingUser != null && passwordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
-            return 0;
-        } 
-        else if (existingUser == null) {
-            return 1; // Handle user not found scenario
-        }
-        else if (!passwordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
-        	return 2;
-        }
-        
-        else {
-            return 3;
-        }
+    public String login(User user) {
+        User foundUser = userRepository.findByUsername(user.getUsername());
+        if (foundUser == null) return "USER_NOT_FOUND";
+        if (!passwordEncoder.matches(user.getPassword(), foundUser.getPassword())) return "WRONG_PASSWORD";
+        		return foundUser.getRole();
     }
+    
+    
     public User resetPassword(User user) {
         User existingUser = userRepository.findByUsername(user.getUsername());
         if (existingUser != null) {
