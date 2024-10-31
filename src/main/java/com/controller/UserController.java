@@ -32,11 +32,15 @@ public class UserController {
         }
     }
     
-    @PostMapping("/register")
-    public User register(@RequestBody User user) {
-        return userService.register(user);
+    @PostMapping("/add")
+    public ResponseEntity<?> addUser(@RequestBody User user) {
+        User savedUser = userService.addUser(user);
+        if (savedUser != null) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error saving user");
+        }
     }
-    
     
 
 }

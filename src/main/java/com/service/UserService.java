@@ -15,12 +15,10 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public User register(User user) {
-        // Hash password before saving
+    public User addUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
-
     public String login(User user) {
         User foundUser = userRepository.findByUsername(user.getUsername());
         if (foundUser == null) return "USER_NOT_FOUND";

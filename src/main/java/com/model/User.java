@@ -30,7 +30,7 @@ public class User {
 
     public User() {}
 
-    public User(String username, String password, String role , Integer userid) {
+    public User (String username, String password, String role , Integer userid) {
         this.username = username;
         this.password = password;
         this.role = role;
