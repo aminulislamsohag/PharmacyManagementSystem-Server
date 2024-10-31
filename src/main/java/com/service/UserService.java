@@ -1,5 +1,6 @@
 package com.service;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,6 +38,24 @@ public class UserService {
         }
     }
 
+    public String getUserRole(String username) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new IllegalArgumentException("User not found with username: " + username);
+        }
+        return user.getRole();
+    }
+
+    public void updateUserRole(String username, String newRole) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new IllegalArgumentException("User not found with username: " + username);
+        }
+        user.setRole(newRole);
+        userRepository.save(user);
+    }
+    
+    
     
     
     
