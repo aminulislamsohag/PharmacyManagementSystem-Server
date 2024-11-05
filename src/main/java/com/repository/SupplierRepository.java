@@ -9,6 +9,6 @@ import com.model.Supplier;
 
 @Repository
 public interface SupplierRepository extends JpaRepository<Supplier, Long> {
-	Supplier findBysupplierid(Integer supplierid);
+	Supplier findByid(Integer id);
   
 }
