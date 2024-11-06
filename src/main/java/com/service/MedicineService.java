@@ -57,6 +57,40 @@ public class MedicineService {
     }
     
     
+    public List<Category> getAllChategorys() {
+        return categoryRepository.findAll();
+    }
+    
+    
+    
+    public Category updateCategory(Long id, Category updatedCategoryData) {
+        Optional<Category> existingCategoryOpt = categoryRepository.findById(id);
+
+        if (existingCategoryOpt.isPresent()) {
+        	Category existingCategory = existingCategoryOpt.get();
+        	existingCategory.setChategoryid(updatedCategoryData.getChategoryid());
+        	existingCategory.setChategoryname(updatedCategoryData.getChategoryname());
+        	existingCategory.setChategorydesc(updatedCategoryData.getChategorydesc());
+        	existingCategory.setLocation(updatedCategoryData.getLocation());
+        	existingCategory.setSupplierid(updatedCategoryData.getSupplierid());
+            return categoryRepository.save(existingCategory);
+        } else {
+            return null; // Supplier with the specified ID was not found
+        }
+    }
+    
+    
+    public void deletecategory(Long id) {
+        if (categoryRepository.existsById(id)) {
+        	categoryRepository.deleteById(id);
+        } else {
+            throw new RuntimeException("Chategory not found with ID: " + id);
+        }
+    }
+    
+    
+    
+    
     
     
 }

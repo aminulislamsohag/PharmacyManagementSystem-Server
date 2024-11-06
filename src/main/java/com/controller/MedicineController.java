@@ -80,6 +80,38 @@ public class MedicineController {
         }
     }
     
+    //category 
+    
+    @GetMapping("/chategorys")
+    public ResponseEntity<List<Category>> getCateorys() {
+        List<Category> categroys = medicineService.getAllChategorys();
+        if (!categroys.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.OK).body(categroys);
+        } else {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+    }
+    
+    @PutMapping("/editchategory/{id}")
+    public ResponseEntity<Category> updateCategory( @PathVariable("id") Long id,  @RequestBody Category updatedCategoryData) {
+        Category updatedChategory = medicineService.updateCategory(id, updatedCategoryData);
+        if (updatedChategory != null) {
+            return ResponseEntity.ok(updatedChategory);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    
+    @DeleteMapping("deletechategory/{id}")
+    public ResponseEntity<String> deleteCategory(@PathVariable Long id) {
+        try {
+        	medicineService.deletecategory(id);
+            return new ResponseEntity<>("Chategory deleted successfully", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error deleting Chategory: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
 	
 	
 }

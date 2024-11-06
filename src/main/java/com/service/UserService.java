@@ -1,9 +1,13 @@
 package com.service;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
 import com.model.User;
 import com.repository.UserRepository;
 
@@ -55,7 +59,31 @@ public class UserService {
         userRepository.save(user);
     }
     
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+    public void deleteuser(Long id) {
+        if (userRepository.existsById(id)) {
+        	userRepository.deleteById(id);
+        } else {
+            throw new RuntimeException("Chategory not found with ID: " + id);
+        }
+    }
     
+    public List<User> searchUser(String query) {
+        List<User> result = new ArrayList<>();
+        
+        try {
+            // Attempt to parse the query as an integer to search by userid
+            int userid = Integer.parseInt(query);
+            result.addAll(userRepository.findByUserid(userid));
+        } catch (NumberFormatException e) {
+            // If parsing fails, treat the query as a username search
+            result.addAll(userRepository.findByUsernameContaining(query));
+        }
+        
+        return result;
+    }
     
     
     

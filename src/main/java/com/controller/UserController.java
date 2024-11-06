@@ -1,11 +1,13 @@
 package com.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import com.model.User;
 import com.service.UserService;
 
@@ -65,6 +67,29 @@ public class UserController {
         }
     }
     
+    @GetMapping("/alluser")
+    public ResponseEntity<List<User>> getUsers() {
+        List<User> users = userService.getAllUsers();
+        if (!users.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.OK).body(users);
+        } else {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+    } 
     
+    @DeleteMapping("deleteuser/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+        try {
+        	userService.deleteuser(id);
+            return new ResponseEntity<>("User deleted successfully", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error deleting User: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    @GetMapping("/search")
+    public List<User> searchUsers(@RequestParam("query") String query) {
+        return userService.searchUser(query);
+    }
 
 }

@@ -8,6 +8,6 @@ import com.model.Category;
 
 @Repository
 public interface CategoryRepository extends JpaRepository <Category, Long> {
-	Category findBychategoryid(Integer supplierid);
+	Category findByid(Integer id);
   
 }
