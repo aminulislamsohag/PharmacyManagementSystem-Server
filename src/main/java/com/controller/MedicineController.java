@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.model.Category;
+import com.model.Medicine;
 import com.model.Supplier;
 import com.service.MedicineService;
 
@@ -25,6 +26,7 @@ public class MedicineController {
 
 	@Autowired
     private MedicineService medicineService;
+	
 
 	 
     @PostMapping("/chategory")
@@ -46,6 +48,20 @@ public class MedicineController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error saving supplier");
         }
     }
+    
+    @PostMapping("/addmedicine")
+    public ResponseEntity<?> addMedicine(@RequestBody Medicine medicine) {
+    	Medicine  saveMedicine = medicineService.addMedicine(medicine);
+        if (saveMedicine != null) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(saveMedicine);
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error saving supplier");
+        }
+    }
+    
+    
+    
+    
     
     
     @GetMapping("/suppliers")

@@ -7,8 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.model.Category;
+import com.model.Medicine;
 import com.model.Supplier;
 import com.repository.CategoryRepository;
+import com.repository.MedicineRepository;
 import com.repository.SupplierRepository;
 
 
@@ -22,6 +24,9 @@ public class MedicineService {
 	@Autowired
     private SupplierRepository supplierRepository;
 	
+	@Autowired
+    private MedicineRepository medicineRepository;
+	
     public Category addCategory(Category category) {
         return categoryRepository.save(category);
     }
@@ -29,6 +34,14 @@ public class MedicineService {
     public Supplier addSupplier(Supplier supplier) {
         return supplierRepository.save(supplier);
     }
+    
+    public Medicine addMedicine(Medicine medicine) {
+        return medicineRepository.save(medicine);
+    }
+    
+    
+    
+    
     
     public List<Supplier> getAllSuppliers() {
         return supplierRepository.findAll();
