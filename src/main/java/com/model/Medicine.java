@@ -1,11 +1,16 @@
 package com.model;
 
+
+import java.time.LocalDate;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+
 
 @Entity
 @Table(name="medicine")
@@ -29,12 +34,17 @@ public class Medicine {
     
     @Column(name="supplierid", length = 255)
     private String supplierid;
+    
+    @Column(name = "created_date", updatable = false)
+    private LocalDate createdDate;
+
 
 	public Medicine() {
 	}
 
+
 	public Medicine(Long id, Integer medicineid, String medicinename, String medicinedesc, String chategoryid,
-			String supplierid) {
+			String supplierid, LocalDate createdDate) {
 		super();
 		this.id = id;
 		this.medicineid = medicineid;
@@ -42,7 +52,13 @@ public class Medicine {
 		this.medicinedesc = medicinedesc;
 		this.chategoryid = chategoryid;
 		this.supplierid = supplierid;
+		this.createdDate = createdDate;
 	}
+
+	@PrePersist
+    protected void onCreate() {
+        createdDate = LocalDate.now();
+    }
 
 	public Long getId() {
 		return id;
@@ -92,7 +108,14 @@ public class Medicine {
 		this.supplierid = supplierid;
 	}	    
 	
-	
+	// Getters and setters for all fields, including createdDate
+    public LocalDate getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(LocalDate createdDate) {
+        this.createdDate = createdDate;
+    }
 	
 	
 	

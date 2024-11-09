@@ -1,5 +1,6 @@
 package com.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,13 +40,53 @@ public class MedicineService {
         return medicineRepository.save(medicine);
     }
     
+    public List<Medicine> getAllMedicine() {
+        return medicineRepository.findAll();
+    }
     
+	public Medicine updateMedicine(Long id, Medicine updatedMedicineData) {
+        Optional<Medicine> existingMedicineOpt = medicineRepository.findById(id);
+
+        if (existingMedicineOpt.isPresent()) {
+            Medicine existingMedicine = existingMedicineOpt.get();
+			existingMedicine.setMedicineid(updatedMedicineData.getMedicineid());
+            existingMedicine.setMedicinename(updatedMedicineData.getMedicinename());
+            existingMedicine.setMedicinedesc(updatedMedicineData.getMedicinedesc());
+            existingMedicine.setChategoryid(updatedMedicineData.getChategoryid());
+            existingMedicine.setSupplierid(updatedMedicineData.getSupplierid());
+            return medicineRepository.save(existingMedicine);
+        } else {
+            return null; // Medicine with the specified ID was not found
+        }
+    }
     
+    public void deleteMedicine(Long id) {
+        if (medicineRepository.existsById(id)) {
+            medicineRepository.deleteById(id);
+        } else {
+            throw new RuntimeException("Medicine not found with ID: " + id);
+        }
+    }
+    
+    public List<Medicine> searchMedicine(String query) {
+        List<Medicine> result = new ArrayList<>();    
+        try {
+            // Attempt to parse the query as an integer to search by id
+            int medicineid = Integer.parseInt(query);
+            result.addAll(medicineRepository.findByMedicineid(medicineid));
+        } catch (NumberFormatException e) {
+            // If parsing fails, treat the query as a name search
+            result.addAll(medicineRepository.findByMedicinenameContaining(query));
+        }    
+        return result;
+    }
     
     
     public List<Supplier> getAllSuppliers() {
         return supplierRepository.findAll();
     }
+    
+    
     public Supplier updateSupplier(Long id, Supplier updatedSupplierData) {
         Optional<Supplier> existingSupplierOpt = supplierRepository.findById(id);
 

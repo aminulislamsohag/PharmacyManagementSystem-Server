@@ -22,7 +22,7 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable()) // Disable CSRF protection
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/user/**","medicine/**").permitAll() // Public URLs
+                .requestMatchers("/user/**","medicine/**","buymedicine/**").permitAll() // Public URLs
                 .anyRequest().authenticated() // Secure all other requests
             )
             .httpBasic(); // Use HTTP Basic authentication

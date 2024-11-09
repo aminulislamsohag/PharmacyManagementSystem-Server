@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.model.Category;
@@ -59,8 +60,40 @@ public class MedicineController {
         }
     }
     
+    @GetMapping("/listmedicine")
+    public ResponseEntity<List<Medicine>> getMedicine() {
+        List<Medicine> listMedicine = medicineService.getAllMedicine();
+        if (!listMedicine.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.OK).body(listMedicine);
+        } else {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+    }
     
+    @PutMapping("/editmedicine/{id}")
+    public ResponseEntity<Medicine> updateMedicines( @PathVariable("id") Long id, @RequestBody Medicine updatedMedicineData) {
+        Medicine updatedMedicine = medicineService.updateMedicine(id, updatedMedicineData);
+        if (updatedMedicine != null) {
+            return ResponseEntity.ok(updatedMedicine);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
     
+    @DeleteMapping("deletemedicine/{id}")
+    public ResponseEntity<String> deleteMedicinedata(@PathVariable Long id) {
+        try {
+        	medicineService.deleteMedicine(id);
+            return new ResponseEntity<>("Medicine deleted successfully", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error deleting Medicine: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+      
+    @GetMapping("/search")
+    public List<Medicine> searchMedicine(@RequestParam("query") String query) {
+        return medicineService.searchMedicine(query);
+    }
     
     
     
