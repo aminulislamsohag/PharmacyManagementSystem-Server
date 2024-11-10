@@ -2,7 +2,6 @@ package com.model;
 
 import java.time.LocalDate;
 
-import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -13,8 +12,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 
 @Entity
 @Table(name="buymedicine")
@@ -30,15 +27,13 @@ public class BuyMedicine {
     @Column(name="quantity")
     private Integer quantity;
     
-    @Column(name = "makedate")  
-    @Temporal(TemporalType.DATE)
+    @Column(name = "makedate")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-    private Date makedate;
+    private LocalDate  makedate;
     
-    @Column(name = "expairdate")  
-    @Temporal(TemporalType.DATE)
+    @Column(name = "expairdate")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-    private Date expairdate;
+    private LocalDate  expairdate;
     
     @Column(name="entryby", length = 255)
     private String entryby;
@@ -54,7 +49,7 @@ public class BuyMedicine {
 	}
 
 
-	public BuyMedicine(Long id, Integer medicineid, Integer quantity, Date makedate, Date expairdate, String entryby,
+	public BuyMedicine(Long id, Integer medicineid, Integer quantity, LocalDate makedate, LocalDate expairdate, String entryby,
 			LocalDate entryDate) {
 		super();
 		this.id = id;
@@ -101,22 +96,22 @@ public class BuyMedicine {
 	}
 
 
-	public Date getMakedate() {
+	public LocalDate getMakedate() {
 		return makedate;
 	}
 
 
-	public void setMakedate(Date makedate) {
+	public void setMakedate(LocalDate makedate) {
 		this.makedate = makedate;
 	}
 
 
-	public Date getExpairdate() {
+	public LocalDate getExpairdate() {
 		return expairdate;
 	}
 
 
-	public void setExpairdate(Date expairdate) {
+	public void setExpairdate(LocalDate expairdate) {
 		this.expairdate = expairdate;
 	}
 
