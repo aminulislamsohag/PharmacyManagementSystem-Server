@@ -27,6 +27,7 @@ public class Category {
     @Column(name="location", length = 255)
     private String location;
     
+   
     @Column(name="supplierid", length = 255)
     private String supplierid;	    
     

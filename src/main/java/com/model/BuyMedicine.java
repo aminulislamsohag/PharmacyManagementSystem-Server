@@ -21,6 +21,10 @@ public class BuyMedicine {
     @GeneratedValue(strategy = GenerationType.IDENTITY) 
     private Long id;
 	
+//	@ManyToOne
+//	@JoinColumn(name = "medicineid", referencedColumnName = "medicineid", insertable = false, updatable = false)
+//	private Medicine medicine;
+//	
     @Column(name="medicineid")
     private Integer medicineid;
     

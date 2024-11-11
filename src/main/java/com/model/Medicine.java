@@ -29,11 +29,17 @@ public class Medicine {
     @Column(name="medicinedesc", length = 255)
     private String medicinedesc;
     
+    
     @Column(name="chategoryid", length = 255)
     private String chategoryid;
     
+//    @ManyToOne
+//    @JoinColumn(name = "supplierid", referencedColumnName = "supplierid", insertable = false, updatable = false)
+//    private Supplier supplier;
+    
+    
     @Column(name="supplierid", length = 255)
-    private String supplierid;
+    private Integer supplierid;
     
     @Column(name = "created_date", updatable = false)
     private LocalDate createdDate;
@@ -44,7 +50,7 @@ public class Medicine {
 
 
 	public Medicine(Long id, Integer medicineid, String medicinename, String medicinedesc, String chategoryid,
-			String supplierid, LocalDate createdDate) {
+			Integer supplierid, LocalDate createdDate) {
 		super();
 		this.id = id;
 		this.medicineid = medicineid;
@@ -100,11 +106,11 @@ public class Medicine {
 		this.chategoryid = chategoryid;
 	}
 
-	public String getSupplierid() {
+	public Integer getSupplierid() {
 		return supplierid;
 	}
 
-	public void setSupplierid(String supplierid) {
+	public void setSupplierid(Integer supplierid) {
 		this.supplierid = supplierid;
 	}	    
 	

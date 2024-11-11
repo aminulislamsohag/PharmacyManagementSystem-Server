@@ -15,6 +15,7 @@ public class Supplier {
 	    @GeneratedValue(strategy = GenerationType.IDENTITY) 
 	    private Long id;
 
+
 	    @Column(name="supplierid")
 	    private Integer supplierid;
 	    
