@@ -31,6 +31,9 @@ public class BuyMedicine {
     @Column(name="quantity")
     private Integer quantity;
     
+    @Column(name="price")
+    private Integer price;
+    
     @Column(name = "makedate")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate  makedate;
@@ -44,7 +47,7 @@ public class BuyMedicine {
     
     @Column(name = "entrydate", updatable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-    private LocalDate entryDate;
+    private LocalDate entrydate;
     
    
 	public BuyMedicine() {
@@ -53,20 +56,24 @@ public class BuyMedicine {
 	}
 
 
-	public BuyMedicine(Long id, Integer medicineid, Integer quantity, LocalDate makedate, LocalDate expairdate, String entryby,
-			LocalDate entryDate) {
+	public BuyMedicine(Long id, Integer medicineid, Integer quantity,Integer price, LocalDate makedate, LocalDate expairdate, String entryby,
+			LocalDate entrydate) {
 		super();
 		this.id = id;
 		this.medicineid = medicineid;
 		this.quantity = quantity;
+		this.price =price;
 		this.makedate = makedate;
 		this.expairdate = expairdate;
 		this.entryby = entryby;
-		this.entryDate = entryDate;
+		this.entrydate = entrydate;
 	}
+	
+	
+	
     @PrePersist
     protected void onCreate() {
-    	entryDate = LocalDate.now();
+    	entrydate = LocalDate.now();
     }
 
 
@@ -98,6 +105,16 @@ public class BuyMedicine {
 	public void setQuantity(Integer quantity) {
 		this.quantity = quantity;
 	}
+	
+	public Integer getPrice() {
+		return price;
+	}
+
+
+	public void setPrice(Integer price) {
+		this.price = price;
+	}
+
 
 
 	public LocalDate getMakedate() {
@@ -130,13 +147,13 @@ public class BuyMedicine {
 	}
 
 
-	public LocalDate getEntryDate() {
-		return entryDate;
+	public LocalDate getEntrydate() {
+		return entrydate;
 	}
 
 
-	public void setEntryDate(LocalDate entryDate) {
-		this.entryDate = entryDate;
+	public void setEntrydate(LocalDate entrydate) {
+		this.entrydate = entrydate;
 	}
     
 	
