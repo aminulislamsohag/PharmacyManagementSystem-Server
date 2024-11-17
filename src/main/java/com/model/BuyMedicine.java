@@ -45,6 +45,9 @@ public class BuyMedicine {
     @Column(name="entryby", length = 255)
     private String entryby;
     
+    @Column(name="voucherid")
+    private Integer voucherid;
+    
     @Column(name = "entrydate", updatable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate entrydate;
@@ -56,8 +59,8 @@ public class BuyMedicine {
 	}
 
 
-	public BuyMedicine(Long id, Integer medicineid, Integer quantity,Integer price, LocalDate makedate, LocalDate expairdate, String entryby,
-			LocalDate entrydate) {
+	public BuyMedicine(Long id, Integer medicineid, Integer quantity,Integer price, LocalDate makedate, LocalDate expairdate, 
+			Integer voucherid, String entryby, LocalDate entrydate) {
 		super();
 		this.id = id;
 		this.medicineid = medicineid;
@@ -65,6 +68,7 @@ public class BuyMedicine {
 		this.price =price;
 		this.makedate = makedate;
 		this.expairdate = expairdate;
+		this.voucherid=voucherid;
 		this.entryby = entryby;
 		this.entrydate = entrydate;
 	}
@@ -134,6 +138,15 @@ public class BuyMedicine {
 
 	public void setExpairdate(LocalDate expairdate) {
 		this.expairdate = expairdate;
+	}
+
+	public Integer getVoucherid() {
+		return voucherid;
+	}
+
+
+	public void setVoucherid(Integer voucherid) {
+		this.voucherid = voucherid;
 	}
 
 

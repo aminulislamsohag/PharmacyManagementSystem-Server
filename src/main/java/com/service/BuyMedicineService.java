@@ -6,11 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
+import com.dto.BuyMedicineReportDTO;
+import com.dto.VoucherReportDTO;
 import com.model.BuyMedicine;
 import com.repository.BuyMedicineRepository;
 import com.repository.MedicineInfoProjection;
@@ -45,6 +48,7 @@ public class BuyMedicineService {
             existingBuyMedicine.setPrice(updatedMedicineData.getPrice());
             existingBuyMedicine.setMakedate(updatedMedicineData.getMakedate());
             existingBuyMedicine.setExpairdate(updatedMedicineData.getExpairdate());
+            existingBuyMedicine.setVoucherid(updatedMedicineData.getVoucherid());
             return buyMedicineRepository.save(existingBuyMedicine);
         } else {
             return null; // Medicine with the specified ID was not found
@@ -81,8 +85,34 @@ public class BuyMedicineService {
     }
     
     
-    // for report 
-    
+    // for buy report 
+    public byte[] generateBuyReport(java.sql.Date entrydate) throws Exception {
+        List<BuyMedicine> buyMedicines = buyMedicineRepository.findAll();
+        
+        // Convert each BuyMedicine to BuyMedicineReportDTO to ensure entrydate is in java.sql.Date format
+        List<BuyMedicineReportDTO> reportData = buyMedicines.stream()
+            .map(BuyMedicineReportDTO::new)
+            .collect(Collectors.toList());
+
+        // Load Jasper template
+        InputStream reportStream = new ClassPathResource("BuyMedicine.jrxml").getInputStream();
+        JasperReport jasperReport = JasperCompileManager.compileReport(reportStream);
+
+        // Prepare data source and parameters
+        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(reportData);
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("ReportTitle", "Buy Report");
+        parameters.put("entrydate", entrydate); // parameter for the report itself
+
+        // Fill the report with data
+        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+
+        // Export to PDF and return byte array
+        return JasperExportManager.exportReportToPdf(jasperPrint);
+    }
+
+   /* 
+    // for report date type is java.sql.Date in model class then no need DTO class
     public byte[] generateBuyReport(java.sql.Date entrydate) throws Exception {
         List<BuyMedicine> buyMedicines = buyMedicineRepository.findAll();
 
@@ -94,7 +124,7 @@ public class BuyMedicineService {
         JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(buyMedicines);
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("ReportTitle", "Buy Report");
-        parameters.put("entrydate", entrydate); // Pass java.sql.Date here to Jasper
+        parameters.put("entrydate", entrydate); // Use "entrydate" to match the parameter name in the Jasper file
 
         // Fill the report with data
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
@@ -102,8 +132,33 @@ public class BuyMedicineService {
         // Export to PDF and return byte array
         return JasperExportManager.exportReportToPdf(jasperPrint);
     }
-
-
+    */
     
+ // for Voucher report 
+    public byte[] generateVoucherReport(java.sql.Date entrydate, Integer voucherid) throws Exception {
+        List<BuyMedicine> buyMedicines = buyMedicineRepository.findAll();
+        
+        // Convert each BuyMedicine to BuyMedicineReportDTO to ensure entrydate is in java.sql.Date format
+        List<VoucherReportDTO> reportData = buyMedicines.stream()
+        	    .map(VoucherReportDTO::new)
+        	    .collect(Collectors.toList());
+
+        // Load Jasper template
+        InputStream reportStream = new ClassPathResource("VoucherReport.jrxml").getInputStream();
+        JasperReport jasperReport = JasperCompileManager.compileReport(reportStream);
+
+        // Prepare data source and parameters
+        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(reportData);
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("ReportTitle", "Voucher Report");
+        parameters.put("entrydate", entrydate); // parameter for the report itself
+        parameters.put("voucherid", voucherid); // parameter for the report itself
+
+        // Fill the report with data
+        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+
+        // Export to PDF and return byte array
+        return JasperExportManager.exportReportToPdf(jasperPrint);
+    }
 
 }

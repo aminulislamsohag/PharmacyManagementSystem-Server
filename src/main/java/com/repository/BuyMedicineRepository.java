@@ -17,7 +17,7 @@ public interface BuyMedicineRepository extends JpaRepository<BuyMedicine, Long> 
 	
 //here table name is model class name some 	
 	@Query("Select b.id AS id,  m.medicineid AS medicineid, m.medicinename AS medicinename,s.supplierid AS supplierid, s.suppliername AS suppliername, b.quantity AS quantity,"
-		+ "b.price AS price,b.makedate AS makedate, b.expairdate AS expairdate,b.entrydate AS entrydate, b.entryby AS entryby "
+		+ "b.price AS price,b.makedate AS makedate, b.expairdate AS expairdate,b.entrydate AS entrydate, b.entryby AS entryby, b.voucherid AS voucherid "
 		+ "from BuyMedicine b, Medicine m , Supplier s where  b.medicineid= m.medicineid and m.supplierid = s.supplierid")
 	List<MedicineInfoProjection> fetchMedicineInfo();
 	

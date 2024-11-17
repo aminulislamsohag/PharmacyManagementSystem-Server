@@ -13,7 +13,8 @@ public interface MedicineInfoProjection {
     Integer getPrice();
     LocalDate getMakedate();
     LocalDate getExpairdate();
-    LocalDate getEntryDate();
+    LocalDate getEntrydate();
     String getEntryby();
+    Integer getVoucherid();
 
 }

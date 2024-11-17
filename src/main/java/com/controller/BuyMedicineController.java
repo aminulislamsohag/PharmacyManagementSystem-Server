@@ -72,22 +72,47 @@ public class BuyMedicineController {
         return buymedicineService.searchBuyMedicine(query);
     }
     
-    // for report 
+ // for report 
     @GetMapping("/buyReport")
     public ResponseEntity<byte[]> downloadBuyReport(@RequestParam("entrydate") String entrydate) {
         try {
-            // Parse entryDate as LocalDate with the format "dd-MM-yyyy"
+            // Parse entrydate as LocalDate with the format "dd-MM-yyyy"
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
             LocalDate formattedEntryDate;
-            
             try {
                 formattedEntryDate = LocalDate.parse(entrydate, formatter); // Convert to LocalDate
             } catch (DateTimeParseException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); // 400 if date format is incorrect
             }
-
-            // Convert LocalDate to java.sql.Date
+            // Convert LocalDate to java.sql.Date to pass to the service
             java.sql.Date sqlDate = java.sql.Date.valueOf(formattedEntryDate);
+            // Generate the report with the parsed date
+            byte[] pdfBytes = buymedicineService.generateBuyReport(sqlDate); // Pass java.sql.Date to the service
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("attachment", "buy_report.pdf");
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(pdfBytes);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+    
+    // for report id data type is java.sql.Date in model class then no need DTO class
+   /* 
+    @GetMapping("/buyReport")
+    public ResponseEntity<byte[]> downloadBuyReport(@RequestParam("entrydate") String entrydate) {
+        try {
+        	 // Parse the String to a java.util.Date using SimpleDateFormat
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+            java.util.Date utilDate = sdf.parse(entrydate);
+
+            // Convert java.util.Date to java.sql.Date
+            Date sqlDate = new Date(utilDate.getTime());
 
             // Generate the report with the parsed date
             byte[] pdfBytes = buymedicineService.generateBuyReport(sqlDate); // Pass java.sql.Date to the service
@@ -102,11 +127,44 @@ public class BuyMedicineController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null); // Handle server errors
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+*/
+    
+    // REport for Voucher
 
+    @GetMapping("/voucherReport")
+    public ResponseEntity<byte[]> downloadBuyReport(@RequestParam("entrydate") String entrydate, @RequestParam("voucherid") Integer voucherid) {
+        try {
+            // Parse entrydate as LocalDate with the format "dd-MM-yyyy"
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+            LocalDate formattedEntryDate;
+            try {
+                formattedEntryDate = LocalDate.parse(entrydate, formatter); // Convert to LocalDate
+            } catch (DateTimeParseException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); // 400 if date format is incorrect
+            }
+            // Convert LocalDate to java.sql.Date to pass to the service
+            java.sql.Date sqlDate = java.sql.Date.valueOf(formattedEntryDate);
+            // Generate the report with the parsed date
+            byte[] pdfBytes = buymedicineService.generateVoucherReport(sqlDate,voucherid); // Pass java.sql.Date to the service
 
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("attachment", "buy_report.pdf");
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(pdfBytes);
 
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+    
+    
+    
+    
 	
 }

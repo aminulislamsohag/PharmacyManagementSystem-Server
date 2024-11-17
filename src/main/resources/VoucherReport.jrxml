@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.3.final using JasperReports Library version 6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="VoucherReport" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2ba2f3a7-09ed-43e2-9af1-6f2807cf27c8">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MYSQL"/>
+	<parameter name="entrydate" class="java.sql.Date">
+		<defaultValueExpression><![CDATA[$P{entrydate}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="voucherid" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[$P{voucherid}]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[SELECT  b.medicineid, m.medicinename, b.price, b.quantity,s.suppliername,b.entryby
+FROM buymedicine b, medicine m, suppliers s
+WHERE 
+	 b.voucherid = $P{voucherid} 
+	 AND b.entrydate = $P{entrydate}
+	 and b.medicineid=m.medicineid
+	 and m.supplierid=s.supplierid]]>
+	</queryString>
+	<field name="medicineid" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="medicineid"/>
+		<property name="com.jaspersoft.studio.field.label" value="medicineid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="buymedicine"/>
+	</field>
+	<field name="medicinename" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="medicinename"/>
+		<property name="com.jaspersoft.studio.field.label" value="medicinename"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="medicine"/>
+	</field>
+	<field name="price" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="price"/>
+		<property name="com.jaspersoft.studio.field.label" value="price"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="buymedicine"/>
+	</field>
+	<field name="quantity" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="quantity"/>
+		<property name="com.jaspersoft.studio.field.label" value="quantity"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="buymedicine"/>
+	</field>
+	<field name="suppliername" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="suppliername"/>
+		<property name="com.jaspersoft.studio.field.label" value="suppliername"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="suppliers"/>
+	</field>
+	<field name="entryby" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="entryby"/>
+		<property name="com.jaspersoft.studio.field.label" value="entryby"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="buymedicine"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="44" splitType="Stretch">
+			<textField>
+				<reportElement x="56" y="0" width="70" height="20" uuid="9ed26cd8-4cd0-420a-8a28-155b8fc8373f"/>
+				<textFieldExpression><![CDATA[$P{entrydate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="459" y="0" width="95" height="20" uuid="fca7f723-a76c-438a-a5a5-63a9643fd944"/>
+				<textFieldExpression><![CDATA[$P{voucherid}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="187" y="0" width="300" height="39" forecolor="#030303" backcolor="#FFFFFF" uuid="9fc62a08-30fc-4e00-91d2-d16036e557cb">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<text><![CDATA[Voucher REPORT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="56" height="20" uuid="ee77e21a-be09-4c03-8e6c-1866c4a7f316"/>
+				<text><![CDATA[Entry Date : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="403" y="0" width="56" height="20" uuid="538fe02e-9199-469c-9225-a2285ea0500e"/>
+				<text><![CDATA[Voucher No: ]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="31" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="95" height="30" uuid="f664048d-a763-41b1-9fc6-5f976704ca36">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8651cde1-1291-430c-950d-f16ae9b192e4"/>
+				</reportElement>
+				<text><![CDATA[medicineid]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="95" y="0" width="92" height="30" uuid="91ed3a0f-ee2c-4efb-9f4f-e97841144a8f">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e63c846a-6887-4191-be74-c9e345c360d4"/>
+				</reportElement>
+				<text><![CDATA[medicinename]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="187" y="0" width="92" height="30" uuid="f08cc909-9f91-4c1f-8b1b-8a4ae2af33fc">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a1de6807-13a9-49ed-b00a-1ae8c364bab6"/>
+				</reportElement>
+				<text><![CDATA[price]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="279" y="0" width="92" height="30" uuid="7e703486-2c96-410d-b31b-3c68fedff6bf">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="cd0595c2-c896-4f4b-80b7-6dbc277702dd"/>
+				</reportElement>
+				<text><![CDATA[quantity]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="371" y="0" width="92" height="30" uuid="f8c3d41a-1191-4600-9af2-51c4f4c86e20">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6bca728f-4180-47b9-a857-782aa770f013"/>
+				</reportElement>
+				<text><![CDATA[suppliername]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="463" y="0" width="92" height="30" uuid="82a8bae0-e361-4910-b230-ebfd3dc079e0">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="dad4a061-2f0b-436b-97c6-1f9fba0b22ea"/>
+				</reportElement>
+				<text><![CDATA[entryby]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="33" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="95" height="30" uuid="2c079b8e-4bd2-4ebe-af9e-40ff435619a6">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8651cde1-1291-430c-950d-f16ae9b192e4"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{medicineid}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="95" y="0" width="92" height="30" uuid="7968bacb-6870-4757-ad75-5fcf6b1c81bf">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e63c846a-6887-4191-be74-c9e345c360d4"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{medicinename}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="187" y="0" width="92" height="30" uuid="21828056-b29a-447f-a556-a837f68dead8">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a1de6807-13a9-49ed-b00a-1ae8c364bab6"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{price}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="279" y="0" width="92" height="30" uuid="f5cc9294-ce35-43ee-ad98-f3c26e6117fc">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="cd0595c2-c896-4f4b-80b7-6dbc277702dd"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{quantity}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="371" y="0" width="92" height="30" uuid="804d8036-2730-4bbc-8815-29fdbeaf232e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6bca728f-4180-47b9-a857-782aa770f013"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{suppliername}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="463" y="0" width="92" height="30" uuid="8b99c10e-4bc8-4c29-b0ab-b48f2948d4f1">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="dad4a061-2f0b-436b-97c6-1f9fba0b22ea"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{entryby}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+</jasperReport>
