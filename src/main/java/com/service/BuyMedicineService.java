@@ -1,6 +1,7 @@
 package com.service;
 
 import java.io.InputStream;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,12 +9,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import com.dto.BuyMedicineReportDTO;
-import com.dto.VoucherReportDTO;
 import com.model.BuyMedicine;
 import com.repository.BuyMedicineRepository;
 import com.repository.MedicineInfoProjection;
@@ -134,31 +136,33 @@ public class BuyMedicineService {
     }
     */
     
- // for Voucher report 
+ // for Voucher report  from multiple table direct connection  database
+    
+    private final DataSource dataSource;
+    @Autowired
+    public BuyMedicineService(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
     public byte[] generateVoucherReport(java.sql.Date entrydate, Integer voucherid) throws Exception {
-        List<BuyMedicine> buyMedicines = buyMedicineRepository.findAll();
-        
-        // Convert each BuyMedicine to BuyMedicineReportDTO to ensure entrydate is in java.sql.Date format
-        List<VoucherReportDTO> reportData = buyMedicines.stream()
-        	    .map(VoucherReportDTO::new)
-        	    .collect(Collectors.toList());
-
         // Load Jasper template
         InputStream reportStream = new ClassPathResource("VoucherReport.jrxml").getInputStream();
         JasperReport jasperReport = JasperCompileManager.compileReport(reportStream);
 
-        // Prepare data source and parameters
-        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(reportData);
+        // Prepare parameters
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("ReportTitle", "Voucher Report");
-        parameters.put("entrydate", entrydate); // parameter for the report itself
-        parameters.put("voucherid", voucherid); // parameter for the report itself
+        parameters.put("entrydate", entrydate); // Pass the entrydate parameter to the report
+        parameters.put("voucherid", voucherid); // Pass the voucherid parameter to the report
 
-        // Fill the report with data
-        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+        // Establish a database connection for the report
+        try (Connection connection = dataSource.getConnection()) {
+            // Fill the report using the query in the Jasper file
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, connection);
 
-        // Export to PDF and return byte array
-        return JasperExportManager.exportReportToPdf(jasperPrint);
+            // Export the report to a PDF
+            return JasperExportManager.exportReportToPdf(jasperPrint);
+        }
     }
+
 
 }

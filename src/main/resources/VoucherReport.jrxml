@@ -10,7 +10,7 @@
 		<defaultValueExpression><![CDATA[$P{voucherid}]]></defaultValueExpression>
 	</parameter>
 	<queryString language="SQL">
-		<![CDATA[SELECT  b.medicineid, m.medicinename, b.price, b.quantity,s.suppliername,b.entryby
+		<![CDATA[SELECT  b.medicineid AS medicineid, m.medicinename AS medicinename, b.price AS price, b.quantity AS quantity,s.suppliername AS suppliername,b.entryby AS entryby
 FROM buymedicine b, medicine m, suppliers s
 WHERE 
 	 b.voucherid = $P{voucherid} 

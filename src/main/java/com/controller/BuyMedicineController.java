@@ -137,31 +137,30 @@ public class BuyMedicineController {
     @GetMapping("/voucherReport")
     public ResponseEntity<byte[]> downloadBuyReport(@RequestParam("entrydate") String entrydate, @RequestParam("voucherid") Integer voucherid) {
         try {
-            // Parse entrydate as LocalDate with the format "dd-MM-yyyy"
+            // Parse entrydate as LocalDate
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-            LocalDate formattedEntryDate;
-            try {
-                formattedEntryDate = LocalDate.parse(entrydate, formatter); // Convert to LocalDate
-            } catch (DateTimeParseException e) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); // 400 if date format is incorrect
-            }
-            // Convert LocalDate to java.sql.Date to pass to the service
-            java.sql.Date sqlDate = java.sql.Date.valueOf(formattedEntryDate);
-            // Generate the report with the parsed date
-            byte[] pdfBytes = buymedicineService.generateVoucherReport(sqlDate,voucherid); // Pass java.sql.Date to the service
+            LocalDate formattedEntryDate = LocalDate.parse(entrydate, formatter);
 
+            // Convert LocalDate to java.sql.Date
+            java.sql.Date sqlDate = java.sql.Date.valueOf(formattedEntryDate);
+
+            // Generate the report
+            byte[] pdfBytes = buymedicineService.generateVoucherReport(sqlDate, voucherid);
+
+            // Prepare HTTP response
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
-            headers.setContentDispositionFormData("attachment", "buy_report.pdf");
-            return ResponseEntity.ok()
-                    .headers(headers)
-                    .body(pdfBytes);
+            headers.setContentDispositionFormData("attachment", "voucher_report.pdf");
+            return ResponseEntity.ok().headers(headers).body(pdfBytes);
 
+        } catch (DateTimeParseException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); // Invalid date format
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
     
     
     
