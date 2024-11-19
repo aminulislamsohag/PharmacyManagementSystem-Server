@@ -74,7 +74,9 @@ public class BuyMedicineController {
     
  // for report 
     @GetMapping("/buyReport")
-    public ResponseEntity<byte[]> downloadBuyReport(@RequestParam("entrydate") String entrydate) {
+    public ResponseEntity<byte[]> downloadBuyReport(
+            @RequestParam("entrydate") String entrydate,
+            @RequestParam("fileType") String fileType) { // Add fileType parameter
         try {
             // Parse entrydate as LocalDate with the format "dd-MM-yyyy"
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -84,23 +86,31 @@ public class BuyMedicineController {
             } catch (DateTimeParseException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); // 400 if date format is incorrect
             }
+
             // Convert LocalDate to java.sql.Date to pass to the service
             java.sql.Date sqlDate = java.sql.Date.valueOf(formattedEntryDate);
-            // Generate the report with the parsed date
-            byte[] pdfBytes = buymedicineService.generateBuyReport(sqlDate); // Pass java.sql.Date to the service
 
+            // Generate the report with the parsed date
+            byte[] reportBytes = buymedicineService.generateBuyReport(sqlDate, fileType); // Pass fileType
+
+            // Prepare HTTP response
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_PDF);
-            headers.setContentDispositionFormData("attachment", "buy_report.pdf");
-            return ResponseEntity.ok()
-                    .headers(headers)
-                    .body(pdfBytes);
+            if ("xlsx".equalsIgnoreCase(fileType)) {
+                headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+                headers.setContentDispositionFormData("attachment", "buy_report.xlsx");
+            } else { // Default to PDF
+                headers.setContentType(MediaType.APPLICATION_PDF);
+                headers.setContentDispositionFormData("attachment", "buy_report.pdf");
+            }
+
+            return ResponseEntity.ok().headers(headers).body(reportBytes);
 
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
     
     // for report id data type is java.sql.Date in model class then no need DTO class
    /* 
@@ -131,11 +141,15 @@ public class BuyMedicineController {
         }
     }
 */
-    
+  
+
     // REport for Voucher
 
     @GetMapping("/voucherReport")
-    public ResponseEntity<byte[]> downloadBuyReport(@RequestParam("entrydate") String entrydate, @RequestParam("voucherid") Integer voucherid) {
+    public ResponseEntity<byte[]> downloadVoucherReport(
+            @RequestParam("entrydate") String entrydate,
+            @RequestParam("voucherid") Integer voucherid,
+            @RequestParam("fileType") String fileType) { // Add fileType parameter
         try {
             // Parse entrydate as LocalDate
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -145,13 +159,19 @@ public class BuyMedicineController {
             java.sql.Date sqlDate = java.sql.Date.valueOf(formattedEntryDate);
 
             // Generate the report
-            byte[] pdfBytes = buymedicineService.generateVoucherReport(sqlDate, voucherid);
+            byte[] reportBytes = buymedicineService.generateVoucherReport(sqlDate, voucherid, fileType);
 
             // Prepare HTTP response
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_PDF);
-            headers.setContentDispositionFormData("attachment", "voucher_report.pdf");
-            return ResponseEntity.ok().headers(headers).body(pdfBytes);
+            if ("xlsx".equalsIgnoreCase(fileType)) {
+                headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+                headers.setContentDispositionFormData("attachment", "voucher_report.xlsx");
+            } else {
+                headers.setContentType(MediaType.APPLICATION_PDF);
+                headers.setContentDispositionFormData("attachment", "voucher_report.pdf");
+            }
+
+            return ResponseEntity.ok().headers(headers).body(reportBytes);
 
         } catch (DateTimeParseException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); // Invalid date format
@@ -162,6 +182,37 @@ public class BuyMedicineController {
     }
 
     
+    /* 
+    //for excel report
+    @GetMapping("/voucherReport")
+    public ResponseEntity<byte[]> downloadVoucherReportExcel(
+            @RequestParam("entrydate") String entrydate, 
+            @RequestParam("voucherid") Integer voucherid) {
+        try {
+            // Parse entrydate as LocalDate
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+            LocalDate formattedEntryDate = LocalDate.parse(entrydate, formatter);
+
+            // Convert LocalDate to java.sql.Date
+            java.sql.Date sqlDate = java.sql.Date.valueOf(formattedEntryDate);
+
+            // Generate the Excel report
+            byte[] excelBytes = buymedicineService.generateVoucherReportExcel(sqlDate, voucherid);
+
+            // Prepare HTTP response
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.setContentDispositionFormData("attachment", "voucher_report.xlsx");
+            return ResponseEntity.ok().headers(headers).body(excelBytes);
+
+        } catch (DateTimeParseException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); // Invalid date format
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+  */  
     
     
     

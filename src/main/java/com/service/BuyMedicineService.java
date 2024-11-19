@@ -1,5 +1,6 @@
 package com.service;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -26,6 +27,10 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
+import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
+import net.sf.jasperreports.export.SimpleXlsxReportConfiguration;
 
 @Service
 public class BuyMedicineService {
@@ -88,10 +93,10 @@ public class BuyMedicineService {
     
     
     // for buy report 
-    public byte[] generateBuyReport(java.sql.Date entrydate) throws Exception {
+    public byte[] generateBuyReport(java.sql.Date entrydate, String fileType) throws Exception {
         List<BuyMedicine> buyMedicines = buyMedicineRepository.findAll();
-        
-        // Convert each BuyMedicine to BuyMedicineReportDTO to ensure entrydate is in java.sql.Date format
+
+        // Convert each BuyMedicine to BuyMedicineReportDTO
         List<BuyMedicineReportDTO> reportData = buyMedicines.stream()
             .map(BuyMedicineReportDTO::new)
             .collect(Collectors.toList());
@@ -104,15 +109,20 @@ public class BuyMedicineService {
         JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(reportData);
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("ReportTitle", "Buy Report");
-        parameters.put("entrydate", entrydate); // parameter for the report itself
+        parameters.put("entrydate", entrydate);
 
         // Fill the report with data
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 
-        // Export to PDF and return byte array
-        return JasperExportManager.exportReportToPdf(jasperPrint);
+        // Export to the desired format
+        if ("xlsx".equalsIgnoreCase(fileType)) {
+            return exportReportToExcel(jasperPrint);
+        } else { // Default to PDF
+            return JasperExportManager.exportReportToPdf(jasperPrint);
+        }
     }
 
+  
    /* 
     // for report date type is java.sql.Date in model class then no need DTO class
     public byte[] generateBuyReport(java.sql.Date entrydate) throws Exception {
@@ -137,13 +147,13 @@ public class BuyMedicineService {
     */
     
  // for Voucher report  from multiple table direct connection  database
-    
+ 
     private final DataSource dataSource;
     @Autowired
     public BuyMedicineService(DataSource dataSource) {
         this.dataSource = dataSource;
     }
-    public byte[] generateVoucherReport(java.sql.Date entrydate, Integer voucherid) throws Exception {
+    public byte[] generateVoucherReport(java.sql.Date entrydate, Integer voucherid, String fileType) throws Exception {
         // Load Jasper template
         InputStream reportStream = new ClassPathResource("VoucherReport.jrxml").getInputStream();
         JasperReport jasperReport = JasperCompileManager.compileReport(reportStream);
@@ -159,10 +169,79 @@ public class BuyMedicineService {
             // Fill the report using the query in the Jasper file
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, connection);
 
-            // Export the report to a PDF
-            return JasperExportManager.exportReportToPdf(jasperPrint);
+            // Generate report based on fileType
+            if ("xlsx".equalsIgnoreCase(fileType)) {
+                return exportReportToExcel(jasperPrint);
+            } else { // Default to PDF
+                return JasperExportManager.exportReportToPdf(jasperPrint);
+            }
         }
     }
 
+    private byte[] exportReportToExcel(JasperPrint jasperPrint) throws Exception {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        // Configure the Excel exporter
+        JRXlsxExporter exporter = new JRXlsxExporter();
+        exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+        exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(outputStream));
+
+        // Excel-specific configuration
+        SimpleXlsxReportConfiguration configuration = new SimpleXlsxReportConfiguration();
+        configuration.setOnePagePerSheet(false);
+        configuration.setDetectCellType(true);
+        configuration.setCollapseRowSpan(false);
+        configuration.setWhitePageBackground(false); // Optional: Adjust based on requirements
+        exporter.setConfiguration(configuration);
+
+        // Export the report
+        exporter.exportReport();
+        return outputStream.toByteArray();
+    }
+
+    /*  // for xcel report
+    private final DataSource dataSource;
+    @Autowired
+    public BuyMedicineService(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+    public byte[] generateVoucherReportExcel(java.sql.Date entrydate, Integer voucherid) throws Exception {
+        // Load Jasper template
+        InputStream reportStream = new ClassPathResource("VoucherReport.jrxml").getInputStream();
+        JasperReport jasperReport = JasperCompileManager.compileReport(reportStream);
+
+        // Prepare parameters
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("ReportTitle", "Voucher Report");
+        parameters.put("entrydate", entrydate); // Pass the entrydate parameter to the report
+        parameters.put("voucherid", voucherid); // Pass the voucherid parameter to the report
+
+        // Establish a database connection for the report
+        try (Connection connection = dataSource.getConnection()) {
+            // Fill the report using the query in the Jasper file
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, connection);
+
+            // Export the report to an Excel file
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+            // Configure the Excel exporter
+            JRXlsxExporter exporter = new JRXlsxExporter();
+            exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+            exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(outputStream));
+
+            // Optional: Set Excel-specific configurations
+            SimpleXlsxReportConfiguration configuration = new SimpleXlsxReportConfiguration();
+            configuration.setOnePagePerSheet(false);
+            configuration.setDetectCellType(true);
+            configuration.setCollapseRowSpan(false);
+            exporter.setConfiguration(configuration);
+
+            // Export the report
+            exporter.exportReport();
+
+            return outputStream.toByteArray();
+        }
+    }
+*/
 
 }
